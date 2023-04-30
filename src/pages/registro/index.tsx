@@ -17,9 +17,7 @@ const manrope = Manrope({ subsets: ["latin"] });
 export default function Registro() {
   const router = useRouter();
 
-  const [isHuman, setIsHuman] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -52,53 +50,40 @@ export default function Registro() {
   const handleRegister = async () => {
     if (captchaToken && username && password && email) {
       setLoading(true);
-      let captchaResponse;
 
       try {
-        captchaResponse = await fetch(`${SERVER_URL}/confirmCaptcha`, {
+        const response = await fetch(`${SERVER_URL}/signup`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
+            username,
+            password,
+            email,
             token: captchaToken,
           }),
         });
+
+        if (response.status !== 200) {
+          errorToast(await response.text(), 3000, "signupError1");
+        } else {
+          setUsername("");
+          setPassword("");
+          setEmail("");
+          successToast("Usuario registrado! Inicia sesión con tus credenciales", 3000, "signupOK");
+          setTimeout(() => {
+            setLoading(false);
+          }, 1500);
+          setTimeout(() => {
+            router.replace("/");
+          }, 3000);
+        }
       } catch (e) {
-        console.log("e");
+        console.error("Algo salió mal registrando usuario", e);
+        setLoading(false);
+        errorToast("Algo salió mal registrando usuario", 2000, "signupError2");
       }
-
-      console.log("captchaResponse", captchaResponse);
-
-      // try {
-      //   const response = await fetch(`${SERVER_URL}/signup`, {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       username,
-      //       password,
-      //       email,
-      //     }),
-      //   });
-
-      //   if (response.status !== 200) {
-      //     errorToast(await response.text(), 3000, "signupError1");
-      //   } else {
-      //     setUsername("");
-      //     setPassword("");
-      //     setEmail("");
-      //     successToast("Usuario registrado! Inicia sesión con tus credenciales", 3000, "signupOK");
-      //     setTimeout(() => {
-      //       setLoading(false);
-      //     }, 1500);
-      //     setTimeout(() => {
-      //       router.replace("/");
-      //     }, 3000);
-      //   }
-      // } catch (e) {
-      //   console.error("Algo salió mal registrando usuario", e);
-      //   setLoading(false);
-      //   errorToast("Algo salió mal registrando usuario", 2000, "signupError2");
-      // }
     } else {
       errorToast("Falta completar información", 2000, "missInfo");
     }
