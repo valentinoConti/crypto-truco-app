@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  background: linear-gradient(to bottom, transparent, #fcebd3) #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(to bottom, transparent, #1d1a18) #37322a;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
