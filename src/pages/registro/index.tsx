@@ -39,9 +39,17 @@ export default function Registro() {
     setEmail(ev.target.value);
   };
 
-  const handleVerification = (token: string, ekey: string) => {
+  const handleVerification = async (token: string, ekey: string) => {
     console.log("token", token);
     console.log("ekey", ekey);
+
+    const captchaResponse = await fetch(`${SERVER_URL}/confirmCaptcha`, {
+      method: "POST",
+      body: JSON.stringify({
+        token,
+        ekey,
+      }),
+    });
 
     // setIsHuman(true);
   };
