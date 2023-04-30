@@ -14,30 +14,30 @@ export default function Home() {
     <main className={`${styles.main} ${manrope.className}`}>
       <div className={styles.container}>
         <div className={styles.logo}>
-          <Image
-            src="/banner.png"
-            alt="CryptoTruco logo"
-            width={300}
-            height={160}
-          />
+          <Image src="/banner.png" alt="CryptoTruco logo" width={300} height={160} />
         </div>
 
         <h2>CryptoTruco</h2>
 
-        <button>Un Jugador</button>
-        <button>Dos jugadores</button>
-        <button>Reglas</button>
+        <Link className={styles.button} href={"/juego"}>
+          Jugar
+        </Link>
+
+        <Link className={styles.button} href={"/"}>
+          Reglas
+        </Link>
 
         <div className={styles.separator} />
 
         <div>Usuario: {username}</div>
-        <button>Iniciar Sesión</button>
-        <Link className={styles.signUp} href={"/registro"}>
+
+        <Link className={styles.button} href={"/"}>
+          Iniciar Sesion
+        </Link>
+
+        <Link className={styles.button} href={"/registro"}>
           Registrarse
         </Link>
-        {/* <button>
-          <a href="/registro">Registrarse</a>
-        </button> */}
 
         <footer>Contactanos</footer>
       </div>

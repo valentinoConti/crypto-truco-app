@@ -21,10 +21,12 @@
     margin: 0;
     width: 100vw;
     height: 100vh;
+    height: 100svh;
     @include tablet {
       margin: 12px auto;
       max-width: 715px;
-      height: inherit;
+      height: 90vh;
+      height: 90svh;
       aspect-ratio: 3 / 4;
     }
 
@@ -39,26 +41,39 @@
     }
 
     button,
-    .signUp {
+    .button {
       width: 70%;
       margin: 2% 0;
       text-align: center;
 
-      background-color: $primary-color;
       border-radius: 6px;
       border: none;
-      box-shadow: 1px 1px 4px $secondary-color;
-      color: $text-color;
       font-size: 1rem;
       font-weight: 500;
       padding: 10px 20px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      color: $text-color;
+      transition: all 0.15s ease-out;
+
+      background-color: $primary-color;
+      box-shadow: 1px 1px 4px $secondary-color;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
-        color: $text-color;
+        background-color: darken($primary-color, 5%);
+        box-shadow: 0px 0px 2px $secondary-color;
       }
+    }
+
+    input {
+      width: 75%;
+      height: 4%;
+      margin-top: 1%;
+      margin-bottom: 4%;
+      text-align: center;
+
+      outline: 1px solid black;
+      padding: 1%;
+      font-size: 18px;
     }
 
     .separator {
@@ -72,5 +87,36 @@
     footer {
       margin-top: auto;
     }
+
+    .registerBtn {
+      margin-top: 12%;
+    }
+  }
+}
+
+.inputTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+
+  .bold {
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .question {
+    margin-right: 4px;
+    padding: 0px 4px;
+
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 800;
+    border: 1px solid $text-color;
+    background-color: lighten($text-color, 50%);
+
+    cursor: pointer;
+    user-select: none;
   }
 }
