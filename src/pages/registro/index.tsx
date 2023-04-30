@@ -1,9 +1,7 @@
-import Head from "next/head";
 import Image from "next/image";
 import { Manrope } from "next/font/google";
 import styles from "../index.module.scss";
 import { ChangeEvent, useState } from "react";
-import Link from "next/link";
 import { ComeBackArrow } from "@/components/ComeBackArrow";
 import Tooltip from "@/components/Tooltip";
 import { errorToast, successToast } from "@/utils/toasts";
@@ -11,6 +9,7 @@ import FullscreenLoader from "@/components/FullscreenLoader";
 import { useRouter } from "next/router";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { SERVER_URL } from "@/constants";
+import { isValidEmail } from "@/utils/isValidEmail";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -39,16 +38,13 @@ export default function Registro() {
     setEmail(ev.target.value);
   };
 
-  const handleVerification = async (token: string, ekey: string) => {
-    console.log("token", token);
-    console.log("ekey", ekey);
-
-    setCaptchaToken(token);
-    // setIsHuman(true);
-  };
-
   const handleRegister = async () => {
     if (captchaToken && username && password && email) {
+      if (!isValidEmail(email)) {
+        errorToast("Your email doesn't look like a valid email", 3000, "emailErr");
+        return;
+      }
+
       setLoading(true);
 
       try {
@@ -71,7 +67,10 @@ export default function Registro() {
           setUsername("");
           setPassword("");
           setEmail("");
+          setCaptchaToken("");
+
           successToast("Usuario registrado! Inicia sesión con tus credenciales", 3000, "signupOK");
+
           setTimeout(() => {
             setLoading(false);
           }, 1500);
@@ -101,8 +100,6 @@ export default function Registro() {
 
         <h2>CryptoTruco</h2>
 
-        {/* <div className={styles.separator} /> */}
-
         <div className={styles.inputTitle}>Nombre de usuario:</div>
         <input type="text" value={username} onChange={changeUsername} />
 
@@ -117,14 +114,11 @@ export default function Registro() {
         </Tooltip>
         <input type="email" value={email} onChange={changeEmail} />
 
-        <form>
-          <HCaptcha
-            sitekey="f5ceaaa7-3643-4b13-8ec5-9203014a7020"
-            onVerify={(token, ekey) => {
-              handleVerification(token, ekey);
-            }}
-          />
-        </form>
+        {!isLoading && (
+          <form>
+            <HCaptcha sitekey="f5ceaaa7-3643-4b13-8ec5-9203014a7020" onVerify={setCaptchaToken} />
+          </form>
+        )}
 
         <button onClick={handleRegister} className={styles.registerBtn}>
           Registrarse
