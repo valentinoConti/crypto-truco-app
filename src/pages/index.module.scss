@@ -1,15 +1,9 @@
 @import "@/rules.scss";
 
-// Define a wood texture background
-$wood-texture-url: url("/wooden.jpg");
-
-// Define color variables
-$primary-color: #b58863;
-$secondary-color: #d9c9b0;
-$text-color: #333333;
-
 .main {
+  // position: relative;
   .container {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -44,19 +38,11 @@ $text-color: #333333;
       margin-bottom: 8%;
     }
 
-    a {
-      color: $secondary-color;
-      text-decoration: none;
-
-      &:hover {
-        color: $primary-color;
-        text-decoration: underline;
-      }
-    }
-
-    button {
+    button,
+    .signUp {
       width: 70%;
       margin: 2% 0;
+      text-align: center;
 
       background-color: $primary-color;
       border-radius: 6px;
@@ -71,6 +57,7 @@ $text-color: #333333;
 
       &:hover {
         background-color: darken($primary-color, 10%);
+        color: $text-color;
       }
     }
 

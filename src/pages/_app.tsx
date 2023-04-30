@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>CryptoTruco | Truco Argentino por Crypto</title>
         <meta
           name="description"
-          content="Crypto Truco Online | Tu juego preferido de cartas, ahora por dólares."
+          content="Crypto Truco Online | Tu juego preferido de cartas, ahora por stablecoins."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
