@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "DEV=dev next dev",
     "build": "next build",
     "start": "next start",
     "deployDev": "npm run build && touch out/.nojekyll && cp CNAME out/ && npx push-dir --dir=out --branch=gh-pages --cleanup --verbose",

@@ -10,6 +10,7 @@ import { errorToast, successToast } from "@/utils/toasts";
 import FullscreenLoader from "@/components/FullscreenLoader";
 import { useRouter } from "next/router";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { SERVER_URL } from "@/constants";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -49,7 +50,7 @@ export default function Registro() {
     if (isHuman && username && password && email) {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost/signup", {
+        const response = await fetch(`${SERVER_URL}/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -80,6 +81,8 @@ export default function Registro() {
         setLoading(false);
         errorToast("Algo salió mal registrando usuario", 2000, "signupError2");
       }
+    } else {
+      errorToast("Falta completar información", 2000, "missInfo");
     }
   };
 
