@@ -26,7 +26,7 @@ export default function Registro() {
       <div className={styles.container}>
         <ComeBackArrow />
         <div className={styles.logo}>
-          <Image src="/banner.png" alt="CryptoTruco logo" width={300} height={160} />
+          <Image src="/banner.png" alt="CryptoTruco logo" width={300} height={160} priority />
         </div>
 
         <h2>CryptoTruco</h2>
