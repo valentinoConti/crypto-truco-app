@@ -5,6 +5,7 @@ import styles from "./index.module.scss";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { SERVER_URL } from "@/constants";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -37,7 +38,17 @@ export default function Home() {
           Jugar
         </Link>
 
-        <Link className={styles.button} href={"/"}>
+        <Link
+          className={styles.button}
+          href={"/"}
+          onClick={async () => {
+            const asd = await fetch(`${SERVER_URL}/checkLogin`);
+
+            const dsa = await asd.text();
+            console.log(asd);
+            console.log(dsa);
+          }}
+        >
           Reglas
         </Link>
 

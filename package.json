@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NEXT_PUBLIC_DEV=dev next dev",
+    "dev": "NEXT_PUBLIC_ENV=dev next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "NEXT_PUBLIC_DEV=prod npm run build && touch out/.nojekyll && cp CNAME out/ && npx push-dir --dir=out --branch=gh-pages --cleanup --verbose",
+    "deploy": "npm run build && touch out/.nojekyll && cp CNAME out/ && npx push-dir --dir=out --branch=gh-pages --cleanup --verbose",
     "lint": "next lint"
   },
   "dependencies": {
