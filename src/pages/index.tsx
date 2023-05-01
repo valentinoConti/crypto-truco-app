@@ -42,7 +42,12 @@ export default function Home() {
           className={styles.button}
           href={"/"}
           onClick={async () => {
-            const asd = await fetch(`${SERVER_URL}/checkLogin`);
+            const asd = await fetch(`${SERVER_URL}/checkLogin`, {
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
 
             const dsa = await asd.text();
             console.log(asd);
