@@ -4,7 +4,7 @@ const nextConfig = {
   output: "export",
   images: { unoptimized: true },
   env: {
-    NEXT_PUBLIC_ENV: "prod",
+    NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV !== "dev" ? "prod" : "dev",
   },
 };
 

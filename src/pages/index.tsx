@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Image from "next/image";
 import { Manrope } from "next/font/google";
 import styles from "./index.module.scss";
@@ -6,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { SERVER_URL } from "@/constants";
+import { infoToast } from "@/utils/toasts";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -25,6 +25,8 @@ export default function Home() {
     router.reload();
   };
 
+  const isLoggedIn = username !== "invitado";
+
   return (
     <main className={`${styles.main} ${manrope.className}`}>
       <div className={styles.container}>
@@ -34,9 +36,21 @@ export default function Home() {
 
         <h2>CryptoTruco</h2>
 
-        <Link className={styles.button} href={"/juego"}>
-          Jugar
-        </Link>
+        {isLoggedIn ? (
+          <Link className={styles.button} href="/juego">
+            Jugar
+          </Link>
+        ) : (
+          <button
+            className={styles.button}
+            style={{ cursor: "not-allowed" }}
+            onClick={() => {
+              infoToast("Registrate para jugar 😉!", 2000, "registerToPlay");
+            }}
+          >
+            Jugar
+          </button>
+        )}
 
         <Link
           className={styles.button}
@@ -61,7 +75,16 @@ export default function Home() {
 
         <div>Usuario: {username}</div>
 
-        {username === "invitado" ? (
+        {isLoggedIn ? (
+          <>
+            <Link className={styles.button} href={"/"}>
+              Billetera
+            </Link>
+            <button onClick={handleLogout} className={styles.button}>
+              Cerrar Sesion
+            </button>
+          </>
+        ) : (
           <>
             <Link className={styles.button} href={"/iniciarSesion"}>
               Iniciar Sesion
@@ -70,15 +93,6 @@ export default function Home() {
             <Link className={styles.button} href={"/registro"}>
               Registrarse
             </Link>
-          </>
-        ) : (
-          <>
-            <Link className={styles.button} href={"/"}>
-              Billetera
-            </Link>
-            <button onClick={handleLogout} className={styles.button}>
-              Cerrar Sesion
-            </button>
           </>
         )}
 
