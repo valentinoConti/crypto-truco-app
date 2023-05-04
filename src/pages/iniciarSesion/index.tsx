@@ -92,10 +92,10 @@ export default function IniciarSesion() {
         <h2>Iniciar Sesion</h2>
 
         <div className={styles.inputTitle}>Nombre de usuario:</div>
-        <input type="text" value={username} onChange={changeUsername} />
+        <input className={styles.signInput} type="text" value={username} onChange={changeUsername} />
 
         <div className={styles.inputTitle}>Contraseña:</div>
-        <input type="password" value={password} onChange={changePassword} />
+        <input className={styles.signInput} type="password" value={password} onChange={changePassword} />
 
         {!isLoading && (
           <form>

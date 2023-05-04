@@ -9,8 +9,18 @@ import { SERVER_URL } from "@/constants";
 import { useRouter } from "next/router";
 import { infoToast } from "@/utils/toasts";
 import FullscreenLoader from "@/components/FullscreenLoader";
+import { StartGamePlus } from "@/components/StartGamePlus";
+import Creating from "@/components/Creating";
 
 const manrope = Manrope({ subsets: ["latin"] });
+
+interface IGame {
+  flor: boolean;
+  buenas: boolean;
+  isUSDC: boolean;
+  amount: number;
+  name?: string;
+}
 
 export default function Registro() {
   const router = useRouter();
@@ -18,11 +28,16 @@ export default function Registro() {
 
   const [loggerUser, setLoggedUser] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createdGame, setCreatedGame] = useState(false);
+  const [games, setGames] = useState<{ [key: string]: IGame }>({});
 
   const isDisconnected = useRef(true);
 
+  // SOCKET CONNECTION AND SETTINGS:
   useEffect(() => {
     console.log("hola?");
+
     const currentUser = localStorage.getItem("loggedUser") ?? "";
     if (!currentUser) {
       router.replace("/");
@@ -52,12 +67,10 @@ export default function Registro() {
       setLoggedUser(username);
     });
 
-    newSocket.on("otherMessage", message => {
-      console.log("message id", message.id);
-
-      if (message.id !== newSocket.id) {
-        setOtherInput(message.value);
-      }
+    newSocket.on("gamesAvailable", gamesAvailable => {
+      console.log("gamesAvailable!", gamesAvailable);
+      setGames(gamesAvailable);
+      setCreatedGame(Object.keys(gamesAvailable).includes(newSocket.id));
     });
 
     newSocket.on("disconnect", _reason => {
@@ -69,8 +82,14 @@ export default function Registro() {
     };
   }, []); // eslint-disable-line
 
-  const [userInput, setUserInput] = useState("");
-  const [otherInput, setOtherInput] = useState("");
+  const handleCreate = (flor: boolean, buenas: boolean, isUSDC: boolean, amount: number) => {
+    const datos = { flor, buenas, isUSDC, amount };
+
+    console.log("datos new game", datos);
+    socket?.emit("createGame", datos);
+
+    setIsCreating(false);
+  };
 
   return (
     <main className={`${styles.main} ${manrope.className}`}>
@@ -80,32 +99,42 @@ export default function Registro() {
 
       {isLoading && <FullscreenLoader />}
 
-      <div className={styles.container}>
-        <ComeBackArrow />
-        <div className={styles.logo}>
-          <Image src="/banner.png" alt="CryptoTruco logo" width={300} height={160} priority />
-        </div>
+      <div className={`${styles.container} ${styles.juego}`}>
+        {socket && (
+          <>
+            <ComeBackArrow />
+            <StartGamePlus
+              onClick={() => {
+                setIsCreating(true);
+              }}
+            />
 
-        <h2>CryptoTruco</h2>
+            {isCreating && <Creating create={handleCreate} cancel={() => setIsCreating(false)} />}
 
-        <div className={styles.separator} />
+            <div className={styles.topName}>{loggerUser}</div>
 
-        <div>{loggerUser}</div>
+            <div className={styles.subtitle}>⬇️ Partidas disponibles ⬇️</div>
 
-        <input
-          value={userInput}
-          onChange={ev => {
-            setUserInput(ev.target.value);
-
-            if (socket) {
-              socket.emit("message", {
-                id: socket.id,
-                value: ev.target.value,
-              });
-            }
-          }}
-        />
-        <input value={otherInput} readOnly />
+            <div className={styles.gamesContainer}>
+              {Object.values(games).map((game: IGame) => (
+                <div key={game.name} className={styles.gameContainer}>
+                  <span className={styles.bold}>{game.name}</span>
+                  <span>👉🏼 {game.flor ? "Con flor" : "Sin flor"}</span>
+                  <span>👉🏼 {game.buenas ? "15 Malas y 15 Buenas" : "18 Totales"}</span>
+                  <div className={styles.coin}>
+                    <span className={styles.bold}>${game.amount}</span>
+                    <Image
+                      alt={game.isUSDC ? "USDC" : "USDT"}
+                      src={game.isUSDC ? "/usdc.png" : "/usdt.png"}
+                      width={30}
+                      height={30}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </main>
   );

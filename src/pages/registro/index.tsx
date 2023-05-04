@@ -108,10 +108,10 @@ export default function Registro() {
         <h2>Registrarse</h2>
 
         <div className={styles.inputTitle}>Nombre de usuario:</div>
-        <input type="text" value={username} onChange={changeUsername} />
+        <input className={styles.signInput} type="text" value={username} onChange={changeUsername} />
 
         <div className={styles.inputTitle}>Contraseña:</div>
-        <input type="password" value={password} onChange={changePassword} />
+        <input className={styles.signInput} type="password" value={password} onChange={changePassword} />
 
         <Tooltip text="No tendras que verificarlo, pero si luego necesitas contactarte y no tienes acceso al correo no podremos ayudarte.">
           <div className={styles.inputTitle}>
@@ -119,7 +119,7 @@ export default function Registro() {
             <span className={styles.bold}>Correo:</span>
           </div>
         </Tooltip>
-        <input type="email" value={email} onChange={changeEmail} />
+        <input className={styles.signInput} type="email" value={email} onChange={changeEmail} />
 
         {!isLoading && (
           <form>
