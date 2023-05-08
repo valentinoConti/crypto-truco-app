@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { Manrope } from "next/font/google";
 import styles from "../index.module.scss";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { ComeBackArrow } from "@/components/ComeBackArrow";
 import { Socket, io } from "socket.io-client";
 import { SERVER_URL } from "@/constants";
@@ -11,16 +11,11 @@ import { infoToast } from "@/utils/toasts";
 import FullscreenLoader from "@/components/FullscreenLoader";
 import { StartGamePlus } from "@/components/StartGamePlus";
 import Creating from "@/components/Creating";
+import { IGame } from "@/utils/types";
+import GameContainer from "@/components/GameContainer";
+import Playing from "@/components/Playing";
 
 const manrope = Manrope({ subsets: ["latin"] });
-
-interface IGame {
-  flor: boolean;
-  buenas: boolean;
-  isUSDC: boolean;
-  amount: number;
-  name?: string;
-}
 
 export default function Registro() {
   const router = useRouter();
@@ -29,15 +24,14 @@ export default function Registro() {
   const [loggerUser, setLoggedUser] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [createdGame, setCreatedGame] = useState(false);
+  const [isWaitingOpponent, setIsWaitingOpponent] = useState(false);
   const [games, setGames] = useState<{ [key: string]: IGame }>({});
+  const [gamePlaying, setGamePlaying] = useState<IGame | null>(null);
 
   const isDisconnected = useRef(true);
 
   // SOCKET CONNECTION AND SETTINGS:
   useEffect(() => {
-    console.log("hola?");
-
     const currentUser = localStorage.getItem("loggedUser") ?? "";
     if (!currentUser) {
       router.replace("/");
@@ -70,7 +64,16 @@ export default function Registro() {
     newSocket.on("gamesAvailable", gamesAvailable => {
       console.log("gamesAvailable!", gamesAvailable);
       setGames(gamesAvailable);
-      setCreatedGame(Object.keys(gamesAvailable).includes(newSocket.id));
+      setIsWaitingOpponent(Object.keys(gamesAvailable).includes(newSocket.id));
+    });
+
+    newSocket.on("message", msg => {
+      infoToast(msg, 5000, "serverInfo");
+    });
+
+    newSocket.on("startGame", (game: IGame) => {
+      setIsLoading(false);
+      setGamePlaying(game);
     });
 
     newSocket.on("disconnect", _reason => {
@@ -102,37 +105,46 @@ export default function Registro() {
       <div className={`${styles.container} ${styles.juego}`}>
         {socket && (
           <>
-            <ComeBackArrow />
-            <StartGamePlus
-              onClick={() => {
-                setIsCreating(true);
-              }}
-            />
+            {!!gamePlaying ? (
+              <Playing game={gamePlaying} />
+            ) : (
+              <>
+                <ComeBackArrow />
+                {!isWaitingOpponent && (
+                  <StartGamePlus
+                    onClick={() => {
+                      setIsCreating(true);
+                    }}
+                  />
+                )}
 
-            {isCreating && <Creating create={handleCreate} cancel={() => setIsCreating(false)} />}
+                {isCreating && <Creating create={handleCreate} cancel={() => setIsCreating(false)} />}
 
-            <div className={styles.topName}>{loggerUser}</div>
+                <div className={styles.topName}>{loggerUser}</div>
 
-            <div className={styles.subtitle}>⬇️ Partidas disponibles ⬇️</div>
+                <div className={styles.subtitle}>⬇️ Partidas disponibles ⬇️</div>
 
-            <div className={styles.gamesContainer}>
-              {Object.values(games).map((game: IGame) => (
-                <div key={game.name} className={styles.gameContainer}>
-                  <span className={styles.bold}>{game.name}</span>
-                  <span>👉🏼 {game.flor ? "Con flor" : "Sin flor"}</span>
-                  <span>👉🏼 {game.buenas ? "15 Malas y 15 Buenas" : "18 Totales"}</span>
-                  <div className={styles.coin}>
-                    <span className={styles.bold}>${game.amount}</span>
-                    <Image
-                      alt={game.isUSDC ? "USDC" : "USDT"}
-                      src={game.isUSDC ? "/usdc.png" : "/usdt.png"}
-                      width={30}
-                      height={30}
+                <div className={styles.gamesContainer}>
+                  {Object.entries(games).map(([gameSocketId, game]: [string, IGame]) => (
+                    <GameContainer
+                      game={game}
+                      isOwnGame={game.creatorName === loggerUser}
+                      key={game.creatorName}
+                      cancelGame={() => {
+                        socket?.emit("cancelGame");
+                      }}
+                      startGame={() => {
+                        setIsLoading(true);
+                        socket?.emit("joinGame", {
+                          game,
+                          gameSocketId,
+                        });
+                      }}
                     />
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </>
         )}
       </div>
