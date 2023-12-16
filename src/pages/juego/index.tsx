@@ -11,7 +11,7 @@ import { infoToast } from "@/utils/toasts";
 import FullscreenLoader from "@/components/FullscreenLoader";
 import { StartGamePlus } from "@/components/StartGamePlus";
 import Creating from "@/components/Creating";
-import { IGame } from "@/utils/types";
+import { IGame, TCard } from "@/utils/types";
 import GameContainer from "@/components/GameContainer";
 import Playing from "@/components/Playing";
 
@@ -21,12 +21,13 @@ export default function Registro() {
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  const [loggerUser, setLoggedUser] = useState("");
+  const [loggedUser, setLoggedUser] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [isWaitingOpponent, setIsWaitingOpponent] = useState(false);
   const [games, setGames] = useState<{ [key: string]: IGame }>({});
   const [gamePlaying, setGamePlaying] = useState<IGame | null>(null);
+  const [cards, setCards] = useState<TCard[] | null>(null);
 
   const isDisconnected = useRef(true);
 
@@ -71,9 +72,13 @@ export default function Registro() {
       infoToast(msg, 5000, "serverInfo");
     });
 
-    newSocket.on("startGame", (game: IGame) => {
+    newSocket.on("updateGame", (game: IGame) => {
       setIsLoading(false);
       setGamePlaying(game);
+    });
+
+    newSocket.on("cards", (cards: any) => {
+      setCards(cards);
     });
 
     newSocket.on("disconnect", _reason => {
@@ -106,7 +111,7 @@ export default function Registro() {
         {socket && (
           <>
             {!!gamePlaying ? (
-              <Playing game={gamePlaying} />
+              <Playing socket={socket} game={gamePlaying} cards={cards} />
             ) : (
               <>
                 <ComeBackArrow />
@@ -120,7 +125,7 @@ export default function Registro() {
 
                 {isCreating && <Creating create={handleCreate} cancel={() => setIsCreating(false)} />}
 
-                <div className={styles.topName}>{loggerUser}</div>
+                <div className={styles.topName}>{loggedUser}</div>
 
                 <div className={styles.subtitle}>⬇️ Partidas disponibles ⬇️</div>
 
@@ -128,7 +133,7 @@ export default function Registro() {
                   {Object.entries(games).map(([gameSocketId, game]: [string, IGame]) => (
                     <GameContainer
                       game={game}
-                      isOwnGame={game.creatorName === loggerUser}
+                      isOwnGame={game.creatorName === loggedUser}
                       key={game.creatorName}
                       cancelGame={() => {
                         socket?.emit("cancelGame");

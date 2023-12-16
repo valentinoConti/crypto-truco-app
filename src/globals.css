@@ -11,12 +11,13 @@ body {
   height: 100vh;
   max-height: 100vh;
   max-height: 100svh;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 body {
   --toastify-toast-width: 480px;
 
+  min-width: 360px;
   background: linear-gradient(to bottom, transparent, #fcebd3) #fff;
 }
 

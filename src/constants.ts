@@ -1,2 +1,2 @@
 export const SERVER_URL =
-  process.env.NEXT_PUBLIC_ENV !== "dev" ? "https://crypto-truco-server.glitch.me" : "http://localhost:8080";
+  process.env.NEXT_PUBLIC_ENV !== "dev" ? "http://24.199.106.182:8080" : "http://localhost:8080";

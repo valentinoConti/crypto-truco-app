@@ -17,3 +17,8 @@
   background-size: cover;
   transition: all 0.33s ease-out;
 }
+
+.cardsContainer {
+  display: flex;
+  flex-direction: row;
+}
