@@ -11,13 +11,13 @@ import { infoToast } from "@/utils/toasts";
 import FullscreenLoader from "@/components/FullscreenLoader";
 import { StartGamePlus } from "@/components/StartGamePlus";
 import Creating from "@/components/Creating";
-import { IGame, TCard } from "@/utils/types";
+import { ICards, IGame, TCard } from "@/utils/types";
 import GameContainer from "@/components/GameContainer";
 import Playing from "@/components/Playing";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
-export default function Registro() {
+export default function Juego() {
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -27,7 +27,7 @@ export default function Registro() {
   const [isWaitingOpponent, setIsWaitingOpponent] = useState(false);
   const [games, setGames] = useState<{ [key: string]: IGame }>({});
   const [gamePlaying, setGamePlaying] = useState<IGame | null>(null);
-  const [cards, setCards] = useState<TCard[] | null>(null);
+  const [cards, setCards] = useState<ICards | null>(null);
 
   const isDisconnected = useRef(true);
 
@@ -65,7 +65,7 @@ export default function Registro() {
     newSocket.on("gamesAvailable", gamesAvailable => {
       console.log("gamesAvailable!", gamesAvailable);
       setGames(gamesAvailable);
-      setIsWaitingOpponent(Object.keys(gamesAvailable).includes(newSocket.id));
+      setIsWaitingOpponent(Object.keys(gamesAvailable).includes(newSocket.id!));
     });
 
     newSocket.on("message", msg => {
@@ -77,7 +77,8 @@ export default function Registro() {
       setGamePlaying(game);
     });
 
-    newSocket.on("cards", (cards: any) => {
+    newSocket.on("cards", (cards: ICards) => {
+      console.log("cards!", cards);
       setCards(cards);
     });
 

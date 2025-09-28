@@ -15,6 +15,13 @@ export interface IGame {
   whosNext?: string;
 }
 
+export interface ICards {
+  hand: TCard[];
+  whosNext: string;
+  myTable: TCard[];
+  opponentTable: TCard[];
+}
+
 export type TCard =
   | "espada-1"
   | "espada-2"

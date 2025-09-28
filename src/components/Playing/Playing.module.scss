@@ -20,5 +20,27 @@
 
 .cardsContainer {
   display: flex;
+  flex-direction: column;
+}
+
+.card {
+  display: flex;
+  cursor: pointer;
+}
+
+.myTable {
+  display: flex;
+  flex-direction: row;
+  background-color: blue;
+}
+
+.opponentTable {
+  display: flex;
+  flex-direction: row;
+  background-color: red;
+}
+
+.hand {
+  display: flex;
   flex-direction: row;
 }
